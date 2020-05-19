@@ -162,7 +162,7 @@ REGISTRATION_OPEN = True
 LOGIN_REDIRECT_URL = '/courses'
 LOGIN_URL = '/accounts/login'
 
-SITE_ID = 7
+SITE_ID = 5
 # use 7 for heroku
 # --- DJANGO REGISTRATION REDUX SETTINGS END ---
 

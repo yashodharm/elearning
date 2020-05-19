@@ -41,9 +41,9 @@ def courses(request):
              profile.save()
 
     if "parent" in request.COOKIES.keys():
-        profile = UserProfile.objects.get(username=request.user.username)
+             profile = UserProfile.objects.get(username=request.user.username)
 
-        if not profile.parent:
+       
             #  print('hi')
             #  print(ref)
 
@@ -53,12 +53,12 @@ def courses(request):
             #  print(type(refer))
              parent = UserProfile.objects.get(username=pare)
              profile.parent = parent
-             print("hi")
+            #  print("hi")
              
 
              profile.save()
-             print(profile.parent.username)
-             print("hi")
+            #  print(profile.parent.username)
+            #  print("hi")
         # print(profile.parent)
     return render(request, "users/course.html", context)
 
