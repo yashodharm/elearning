@@ -49,7 +49,7 @@ def courses(request):
 
             #  print("hi")
              pare=request.COOKIES['parent']
-             refer=Referral.objects.get(code=code)
+            
             #  print(type(refer))
              parent = UserProfile.objects.get(username=pare)
              profile.parent = parent
