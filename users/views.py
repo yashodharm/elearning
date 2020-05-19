@@ -99,6 +99,7 @@ def charged(request,course_name):
     user=request.user
     if user.parent:
         user.parent.affamount=user.parent.affamount+1
+        print(user.parent)
         print(user.parent.affamount)
         user.parent.save()
 

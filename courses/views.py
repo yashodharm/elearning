@@ -53,8 +53,12 @@ def courses(request):
             #  print(type(refer))
              parent = UserProfile.objects.get(username=pare)
              profile.parent = parent
-             profile.save()
+             print("hi")
+             
 
+             profile.save()
+             print(profile.parent.username)
+             print("hi")
         # print(profile.parent)
     return render(request, "users/course.html", context)
 
