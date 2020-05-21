@@ -1,0 +1,21 @@
+#nav{
+
+
+    align-items:center;
+    left: 0;
+    padding: 0rem , .8rem , 0rem ;
+    position: fixed ;
+    right: 0;
+    top:1.85rem;
+    display:block;
+    background-color:linear-gradient(180deg,#121a39,rgba(18,26,57,0));
+    transition: all .2s;
+    z-index: 50
+}
+
+.nav-scrolled{
+    padding:0.6rem;
+    background:#111938;
+    opacity:0.8;
+    
+}

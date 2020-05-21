@@ -9,7 +9,7 @@ from pinax.referrals.models import Referral
 def courses(request):
     user=request.user
     
-    print(user)
+    
     
     if request.user.is_site_admin:
         queryset = Course.objects.all()

@@ -1,10 +1,15 @@
+{%load static%}
+
 <!-- Navigation bar -->
+<link href="{% static "css/navbar.css" %}" rel="stylesheet"/>
+
+<header id="nav">
 <nav class="navbar" role="navigation">
   <div class="container-fluid">
 
     <!-- Logo -->
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainNavBar">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainNavBar">finducate
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -44,3 +49,42 @@
     </div>
   </div>
 </nav>
+</header>
+
+<script>
+// When the user scrolls down 20px from the top of the document, slide down the navbar
+window.onscroll = function() {
+  scrollFunction();
+
+  };
+
+
+
+function scrollFunction() {
+ 
+  if (document.body.scrollTop  || document.documentElement.scrollTop) {
+    //list = document.getElementsByClassName("nav");
+    //for (index = 0; index < list.length; ++index) {
+    //    list[index].setAttribute('style', 'background-color: #111938;top=0;');
+        
+    //}
+      document.getElementById("nav").classList.add("nav-scrolled");
+      console.log(document.getElementById("nav").classList)
+    
+  } else {
+    
+    //list = document.getElementsByClassName("nav");
+    //for (index = 0; index < list.length; ++index) {
+    //    list[index].setAttribute('style', 'background-color: #333;top=-50px;');
+        
+    //}
+    console.log("hi")
+    document.getElementById("nav").classList.remove("nav-scrolled");
+    console.log(document.getElementById("nav").classList)
+
+    
+    
+    
+  }
+}
+</script>

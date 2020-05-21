@@ -1,0 +1,28 @@
+.announcement {
+    background: var(--blue);
+    color: #fff;
+    font-size: .5rem;
+    font-weight: var(--bold);
+    left: 0;
+    padding: .1rem;
+    position: fixed;
+    text-align: center;
+    text-decoration: none;
+    top: 0;
+    width: calc(100%);
+    z-index:22
+}
+
+.announcement:hover {
+    background-color:var(--lightBlue)
+}
+
+.announcement span {
+    text-decoration:underline
+}
+
+@media (min-width: 32em) {
+    .announcement {
+        font-size:1.2rem
+    }
+}

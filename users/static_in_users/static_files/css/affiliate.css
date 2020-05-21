@@ -1,0 +1,81 @@
+.main{
+    ;
+}
+.main h1{
+    margin: 0;
+}
+
+.main h3{
+    color: #637f83;
+    margin: 0;
+}
+
+.main hr{
+    border-style: solid;
+    height: 10px;
+}
+
+
+.box{
+    background-color: grey;
+    width: 35%;
+    margin: 0 auto;
+    border: solid;
+    position: absolute;
+    left: 10%
+}
+
+.box1{
+    background-color: white;
+    width: 35%;
+    margin: 0 auto;
+    border: solid;
+    position: absolute;
+    right: 10%;
+}
+
+
+
+
+.icon{
+    width: 20%;
+    padding: 10px 0 10px 10px;
+}
+
+.content{
+
+    width: 70%;
+    position: absolute;
+    top: 5px;
+    left: 100px;
+}
+
+.share{
+    background-color: white;
+    margin: 0 auto;
+    width: 90%;
+    text-align: center;
+    border: solid;
+    box-shadow: 20px;
+    padding: 10px ;
+
+}
+
+
+
+.main a{
+    color: #637f83;
+    font-size: 2rem;
+    margin: 0 1%;
+}
+
+.main a:hover{
+    color: #204051;
+}
+
+.middle{
+    width: 50%;
+    background-color: #637f83;
+    border: solid;
+} 
+ 

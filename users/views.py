@@ -126,7 +126,8 @@ def affiliate(request):
     profile.referral=referral
     profile.save()
     context={
-        "profile":profile
+        "profile":profile,
+        "title":"Affiliate"
 
     }
     
@@ -148,7 +149,7 @@ def charge(request,course_name):
     user=request.user
     print(user.parent)
     context = {
-           "title": "Courses",
+           "title": course_name,
             "user":user,
             "course":course_name,
             "intro":q,
