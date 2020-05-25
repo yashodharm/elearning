@@ -3,28 +3,27 @@
   {% load staticfiles %}
 
   <div class="container content">
-    <link href="{% static "css/course.css" %}" rel="stylesheet"/>
+    <link href="{% static "css/webinar.css" %}" rel="stylesheet"/>
     <div class="row">
       {% if queryset %}
         {% for instance in queryset %}
           <div class="col-md-4 course-box-model">
-            {% if instance in queryset2%}
-            <a href="{% url 'course_homepage' instance.course_name %} ">
-            {% else%}
-            <a href="{% url 'charge_course' instance.course_name %}">
-            {% endif %}  
+            {%if instance in queryset2%}
+            <a href="{% url 'webinar_homepage' instance.webinar_name %} ">
+            {%else%}
+            <a href="{% url 'charge_webinar' instance.webinar_name %}">
+            {%endif%}
               <div class="inner-wrap">
                 <div class="inner-top">
-                  {{ instance.course_name }}
+                  {{ instance.webinar_name }}
                 </div>
                 <div class="inner-middle"></div>
                 <div class="inner-bottom">
-                  <span class="author">Author: {{ instance.user }}</span>
+                  <span class="author"> Author: {{ instance.user }}</span>
                   <span class="course-type">Self-Paced</span>
                 </div>
               </div>
             </a>
-            
           </div>
         {% endfor %}
       {% endif %}

@@ -24,10 +24,10 @@ urlpatterns = [
     
     url(r'^about/$', user_views.about, name='about'),
     url(r'^contact/$', user_views.contact, name='contact'),
-    
+    url(r'^faq/$', user_views.faq, name='faq'),
     url(r'^admin/', admin.site.urls),
     url(r'^courses/', include('courses.urls')),
-   
+    url(r'^webinars/', include('webinars.urls')),
     url(r'^profile/', include('users.urls')),
     # url(r'^accounts/', include('django.contrib.auth.urls')),    
     url(r'^accounts/', include('registration.backends.simple.urls')),

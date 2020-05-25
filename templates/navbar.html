@@ -22,6 +22,7 @@
         <li class="active"><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
         {% if request.user.is_authenticated %}
           <li><a href="{% url 'courses' %}"><span class="glyphicon glyphicon-education"></span> Courses</a></li>
+          <li><a href="{% url 'webinars' %}"><span class="glyphicon glyphicon-education"></span> Webinars</a></li>
         {% else %}
           <li><a href="/"><span class="glyphicon glyphicon-education"></span> Courses</a></li>
         {% endif %}

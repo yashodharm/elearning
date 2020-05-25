@@ -1,4 +1,6 @@
 from courses.forms import AddCourseForm
+from webinars.forms import AddWebinarForm
+from webinars.models import *
 from courses.models import *
 from .forms import *
 from pinax.referrals.models import Referral
@@ -44,6 +46,15 @@ def about(request):
     # print(tutorial) 
     return render(request, "users/about.html", context)
 
+def faq(request):
+    context = {
+        "title": "faq",
+    }
+    # tutorial  = request.COOKIES['parent']
+    # print(tutorial) 
+    return render(request, "users/faq.html", context)   
+
+
 
 def contact(request):
     contact_form = Contact(request.POST or None)
@@ -85,16 +96,13 @@ def profile(request):
         
 
 @login_required
-def charged(request,course_name):
+def charged_course(request,course_name):
     razorpay_client = razorpay.Client(auth=("rzp_test_6ChBFF3DEQamI8", "RIn69McAqs35zFjHZOB0jqjM"))
     amount = 50000
     payment_id = request.POST['razorpay_payment_id']
     razorpay_client.payment.capture(payment_id, amount)
     c=Course.objects.get(course_name=course_name)
     c.students.set([request.user])
-    # print(request)
-    # print(c.students)
-    # c.purchase()
     c.save()
     user=request.user
     if user.parent:
@@ -103,13 +111,26 @@ def charged(request,course_name):
         print(user.parent.affamount)
         user.parent.save()
 
-    # print(c.students)
-    # print("my name is Piyush \n")
-
-    
-    # return json.dumps(razorpay_client.payment.fetch(payment_id))
-    
     return redirect('profile')
+
+@login_required
+def charged_webinar(request,webinar_name):
+    razorpay_client = razorpay.Client(auth=("rzp_test_6ChBFF3DEQamI8", "RIn69McAqs35zFjHZOB0jqjM"))
+    amount = 50000
+    payment_id = request.POST['razorpay_payment_id']
+    razorpay_client.payment.capture(payment_id, amount)
+    c=Webinar.objects.get(webinar_name=webinar_name)
+    c.students.set([request.user])
+    c.save()
+    user=request.user
+    if user.parent:
+        user.parent.affamount=user.parent.affamount+1
+        print(user.parent)
+        print(user.parent.affamount)
+        user.parent.save()
+
+    return redirect('profile')
+
 
 @login_required
 def affiliate(request):
@@ -135,19 +156,10 @@ def affiliate(request):
     
 
 @login_required
-def charge(request,course_name):
+def charge_course(request,course_name):
     c=Course.objects.filter(course_name=course_name)
-    print(c)
     q=c[0]
-    print(q.text)
-    print(q.students)
-    # print(q.get("purchased"))
-    # if q.get("purchased") == True:
-
-    #     print("hi")
-    #     return render(request,"courses/charged.html")
     user=request.user
-    print(user.parent)
     context = {
            "title": course_name,
             "user":user,
@@ -157,6 +169,24 @@ def charge(request,course_name):
             }
     
     return render(request, "courses/charge.html",context)
+
+
+
+@login_required
+def charge_webinar(request,webinar_name):
+    c=Webinar.objects.filter(webinar_name=webinar_name)
+    q=c[0]
+    user=request.user
+    context = {
+           "title": webinar_name,
+            "user":user,
+            "course":webinar_name,
+            "intro":q,
+            "text": q.text
+            }
+    
+    return render(request, "webinars/charge.html",context)
+
 
 @user_passes_test(lambda user: user.is_site_admin)
 def admin(request):
@@ -189,11 +219,14 @@ def admin(request):
 def professor(request):
     add_course_form = AddCourseForm(request.POST or None)
     queryset_course = Course.objects.filter(user__username=request.user)
-
+    queryset_webinar = Webinar.objects.filter(user__username=request.user)
+    add_webinar_form = AddWebinarForm(request.POST or None)
     context = {
         "title": "Professor",
         "add_course_form": add_course_form,
+        "add_webinar_form":add_webinar_form,
         "queryset_course": queryset_course,
+        "queryset_webinar": queryset_webinar,
     }
 
     if add_course_form.is_valid():
@@ -211,15 +244,32 @@ def professor(request):
         instance.save()
         return redirect(reverse('professor_course', kwargs={'course_name': course_name}))
 
+    if add_webinar_form.is_valid():
+        webinar_name = add_webinar_form.cleaned_data.get("webinar_name")
+        instance = add_webinar_form.save(commit=False)
+        instance.user = request.user
+        instance.text = add_webinar_form.cleaned_data.get("text")
+        key = add_webinar_form.cleaned_data.get("link")
+
+        if 'embed' not in key and 'youtube' in key:
+            key = key.split('=')[1]
+            instance.link = 'https://www.youtube.com/embed/' + key
+
+        
+        instance.save()
+        return redirect(reverse('professor_webinar', kwargs={'webinar_name': webinar_name}))
+
+
     return render(request, "users/professor_dashboard.html", context)
 
 
 @login_required
 def student(request):
-    queryset = Course.objects.filter(students=request.user)
-
+    queryset1 = Course.objects.filter(students=request.user)
+    queryset2 = Webinar.objects.filter(students=request.user)
     context = {
-        "queryset": queryset,
+        "queryset1": queryset1,
+        "queryset2": queryset2,
         "title": request.user,
     }
 
@@ -274,12 +324,26 @@ def course_homepage(request, course_name):
         if i.course_name == course_name:
             return redirect(reverse(student_course, kwargs={'course_name': course_name, "slug": chapter_list[0].slug}))
     if chapter_list:
-        return redirect( reverse("charge") )
+        return redirect( reverse("charge_course") )
+        # reverse(student_course, kwargs={'course_name': course_name, "slug": chapter_list[0].slug})
+    else:
+        warning_message = "Currently there are no videos for this course "
+        messages.warning(request, warning_message)
+        return redirect(reverse('courses'))
+
+@login_required
+def webinar_homepage(request, webinar_name):
+    session_list = Session.objects.filter(webinar__webinar_name=webinar_name)
+    for i in Webinar.objects.filter(students=request.user):
+        if i.webinar_name == webinar_name:
+            return redirect(reverse(student_webinar, kwargs={'webinar_name': webinar_name, "slug": session_list[0].slug}))
+    if chapter_list:
+        return redirect( reverse("charge_webinar") )
         # reverse(student_course, kwargs={'course_name': course_name, "slug": chapter_list[0].slug})
     else:
         warning_message = "Currently there are no videos for this webinar "
         messages.warning(request, warning_message)
-        return redirect(reverse('courses'))
+        return redirect(reverse('webinars'))
 
 
 @login_required
@@ -308,6 +372,39 @@ def student_course(request, course_name, slug=None):
         }
         # print(result_list)
         return render(request, "users/student_courses.html", context)
+
+    else:
+        raise Http404
+
+
+
+
+@login_required
+def student_webinar(request, webinar_name, slug=None):
+    webinar = Webinar.objects.get(webinar_name=webinar_name)
+    session_list = Session.objects.filter(webinar=webinar)
+    session = Session.objects.get(webinar__webinar_name=webinar_name, slug=slug)
+    text = TextBlockW.objects.filter(text_block_fk=session)
+    videos = YTLinkW.objects.filter(yt_link_fk=session)
+    files = FileUploadW.objects.filter(file_fk=session)
+    gdlinks = gdlinkW.objects.filter(gd_link_fk=session)
+    user = request.user
+    
+    if user in webinar.students.all() or user.is_professor or user.is_site_admin or webinar.for_everybody:
+        result_list = sorted(
+            chain(text, videos, files, gdlinks),
+            key=lambda instance: instance.date_created)
+
+        context = {
+            "webinar_name": webinar_name,
+            "session_list": session_list,
+            "session_name": session.session_name,
+            "slug": session.slug,
+            "result_list": result_list,
+            "title": webinar_name + ' : ' + session.session_name,
+        }
+        # print(result_list)
+        return render(request, "users/student_webinars.html", context)
 
     else:
         raise Http404

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+  <!-- Course core css -->
+  <link href="{% static "css/webinar.css" %}" rel="stylesheet"/>
+
+  {% include 'breadcrumb.html' %}
+
+  <div class="container course-professor-panel">
+    <div class="row">
+      <div class="col-md-3">
+        <form method='POST' action=''>
+          {% csrf_token %}
+          {{ add_Session_form|crispy }}
+          <input class='btn btn-primary' type='submit' value='Add session'/>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        {% if queryset_Session %}
+          
+          <table class="table table-condensed table-hover generic-table">
+            <thead>
+            <tr>
+              <th>Session name</th>
+              <th>Date created</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            {% for instance in queryset_Session %}
+              <tr>
+                <td class="col-md-8"><a href="{% url 'session' instance.webinar.webinar_name instance.slug %}">{{ instance.session_name }}</a></td>
+                <td class="col-md-2">{{ instance.chapter_created_date }}</td>
+                <td class="col-md-2">
+                  <a href="{% url 'edit_session' instance.webinar.webinar_name instance.slug %}">
+                    <input class='btn btn-primary btn-sm' type='submit' value='Rename'/>
+                  </a>
+                  <a href="{% url 'delete_session' instance.webinar.webinar_name instance.slug%}">
+                    <input class='btn btn-danger btn-sm' type='submit' value='Delete'/>
+                  </a>
+                </td> 
+              </tr>
+            {%endfor%}
+          </table>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

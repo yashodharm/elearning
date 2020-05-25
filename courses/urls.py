@@ -5,8 +5,8 @@ from users import views as user_views
 urlpatterns = [
     url(r'^$', course_views.courses, name='courses'),
     url(r'^student/(?P<course_name>[\w ]+)/$', user_views.course_homepage, name='course_homepage'),
-    url(r'^student/(?P<course_name>[\w ]+)/charge/$', user_views.charge ,name='charge'),
-    url(r'^student/(?P<course_name>[\w ]+)/charge/test/$', user_views.charged, name="test"),
+    url(r'^student/(?P<course_name>[\w ]+)/charge/$', user_views.charge_course ,name='charge_course'),
+    url(r'^student/(?P<course_name>[\w ]+)/charge/test/$', user_views.charged_course, name="test_course"),
     url(r'^student/(?P<course_name>[\w ]+)/(?P<slug>[\w-]+)/$', user_views.student_course,
         name='student_course'),
     

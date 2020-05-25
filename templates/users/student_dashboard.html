@@ -11,8 +11,9 @@
   <div class="container content">
     <link href="{% static "css/course.css" %}" rel="stylesheet"/>
     <div class="row">
-      {% if queryset %}
-        {% for instance in queryset %}
+      {% if queryset1 %}
+        <h1>Courses</h1>
+        {% for instance in queryset1 %}
           <div class="col-md-4 course-box-model">
 
             <a href="{% url 'course_homepage' instance.course_name %} ">
@@ -28,10 +29,34 @@
               </div>
             </a>
           </div>
+        {% endfor %}
+      {% endif %}
+      
+    </div>
+  </div>
+  <div class="container content">
+    <link href="{% static "css/webinar.css" %}" rel="stylesheet"/>
+    <div class="row">
+      {% if queryset2 %}
+        <h1>Webinars</h1>
+        {% for instance in queryset2 %}
+          <div class="col-md-4 course-box-model">
+
+            <a href="{% url 'webinar_homepage' instance.webinar_name %} ">
+              <div class="inner-wrap">
+                <div class="inner-top">
+                  {{ instance.webinar_name }}
+                </div>
+                <div class="inner-middle"></div>
+                <div class="inner-bottom">
+                  <span class="author">Author: {{ instance.user }}</span>
+                  <span class="course-type">Self-Paced</span>
+                </div>
+              </div>
+            </a>
+          </div>
 
         {% endfor %}
       {% endif %}
-    </div>
-  </div>
 
 {% endblock %}

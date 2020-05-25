@@ -6,20 +6,20 @@ from pinax.referrals.models import Referral
 
 
 @login_required
-def courses(request):
+def webinars(request):
     user=request.user
     
     
     
     if request.user.is_site_admin:
-        queryset = Course.objects.all()
+        queryset = Webinar.objects.all()
     else:
-        queryset = Course.objects.filter(for_everybody=True )
-        queryset2 = Course.objects.filter(students=user)
+        queryset = Webinar.objects.filter(for_everybody=True )
+        queryset2 = Webinar.objects.filter(students=user)
         
 
     context = {
-        "title": "Courses",
+        "title": "Webinars",
         "queryset": queryset,
         "queryset2":queryset2,
     }
@@ -61,54 +61,54 @@ def courses(request):
             #  print(profile.parent.username)
             #  print("hi")
         # print(profile.parent)
-    return render(request, "users/course.html", context)
+    return render(request, "users/webinar.html", context)
 
 
 @user_passes_test(lambda user: user.is_professor)
-def course(request, course_name=None):
-    add_chapter_form = AddChapterForm(request.POST or None)
-    queryset_chapter = Chapter.objects.filter(course__course_name=course_name)
-    # for i in queryset_chapter:
-    #     print(i.course.course_name)
+def webinar(request, webinar_name=None):
+    add_Session_form = AddSessionForm(request.POST or None)
+    queryset_Session = Session.objects.filter(webinar__webinar_name=webinar_name)
+    # for i in queryset_Session:
+    #     print(i.webinar.webinar_name)
     
     context = {
-        "title": course_name,
-        "add_chapter_form": add_chapter_form,
-        "queryset_chapter": queryset_chapter,
-        "course_name": course_name,
+        "title": webinar_name,
+        "add_Session_form": add_Session_form,
+        "queryset_Session": queryset_Session,
+        "webinar_name": webinar_name,
         "path": "Profile",
         "redirect_path": "profile",
     }
     
-    if add_chapter_form.is_valid():
+    if add_Session_form.is_valid():
         
-        instance = add_chapter_form.save(commit=False)
-        instance.course = Course.objects.get(course_name=course_name)
+        instance = add_Session_form.save(commit=False)
+        instance.webinar = Webinar.objects.get(webinar_name=webinar_name)
         instance.save()
         
-        return redirect(reverse('professor_course', kwargs={'course_name': course_name}))
+        return redirect(reverse('professor_webinar', kwargs={'webinar_name': webinar_name}))
     
-    return render(request, "courses/course.html", context)
+    return render(request, "webinars/webinar.html", context)
 
 
 @user_passes_test(lambda user: user.is_professor)
-def chapter(request, course_name=None, slug=None):
-    place = Chapter.objects.get(course__course_name=course_name, slug=slug)
+def session(request, webinar_name=None, slug=None):
+    place = Session.objects.get(webinar__webinar_name=webinar_name, slug=slug)
 
     add_link_form = AddLinkForm(request.POST or None)
     add_txt_form = AddTxtForm(request.POST or None)
     add_gdlink_form=AddGDLinkForm(request.POST or None)
     file_upload_form = FileUploadForm(request.POST or None, request.FILES or None)
 
-    queryset_txt_block = TextBlock.objects.filter(text_block_fk__id=place.id)
-    queryset_yt_link = YTLink.objects.filter(yt_link_fk__id=place.id)
-    queryset_files = FileUpload.objects.filter(file_fk__id=place.id)
-    queryset_gdlink = gdlink.objects.filter(gd_link_fk__id=place.id)
+    queryset_txt_block = TextBlockW.objects.filter(text_block_fk__id=place.id)
+    queryset_yt_link = YTLinkW.objects.filter(yt_link_fk__id=place.id)
+    queryset_files = FileUploadW.objects.filter(file_fk__id=place.id)
+    queryset_gdlink = gdlinkW.objects.filter(gd_link_fk__id=place.id)
 
     
     context = {
-        "title": place.chapter_name,
-        "course_name": course_name,
+        "title": place.session_name,
+        "webinar_name": webinar_name,
         "slug": slug,
         "add_link_form": add_link_form,
         "add_txt_form": add_txt_form,
@@ -124,7 +124,7 @@ def chapter(request, course_name=None, slug=None):
 
     if add_link_form.is_valid() and 'add_link' in request.POST:
         instance = add_link_form.save(commit=False)
-        instance.yt_link_fk = Chapter.objects.get(id=place.id)
+        instance.yt_link_fk = Session.objects.get(id=place.id)
 
         key = add_link_form.cleaned_data.get("link")
 
@@ -132,20 +132,20 @@ def chapter(request, course_name=None, slug=None):
             key = key.split('=')[1]
             instance.link = 'https://www.youtube.com/embed/' + key
 
-        instance.yt_link_fk = Chapter.objects.get(id=place.id)
+        instance.yt_link_fk = Session.objects.get(id=place.id)
         instance.save()
-        return redirect(reverse('chapter', kwargs={'course_name': course_name,
+        return redirect(reverse('session', kwargs={'webinar_name': webinar_name,
                                                    'slug': slug}))
 
     if add_gdlink_form.is_valid() and 'add_gdlink' in request.POST:
         
         instance = add_gdlink_form.save(commit=False)
-        instance.gd_link_fk = Chapter.objects.get(id=place.id)
+        instance.gd_link_fk = Session.objects.get(id=place.id)
 
         instance.gdlink = add_gdlink_form.cleaned_data.get("link")
         instance.save()
 
-        return redirect(reverse('chapter', kwargs={'course_name': course_name,
+        return redirect(reverse('session', kwargs={'webinar_name': webinar_name,
                                                    'slug': slug}))
 
 
@@ -153,68 +153,68 @@ def chapter(request, course_name=None, slug=None):
     if add_txt_form.is_valid() and 'add_text' in request.POST:
         instance = add_txt_form.save(commit=False)
         print("hi")
-        instance.text_block_fk = Chapter.objects.get(id=place.id)
+        instance.text_block_fk = Session.objects.get(id=place.id)
         # instance.lesson = add_txt_form.get('lesson')
         instance.save()
-        return redirect(reverse('chapter', kwargs={'course_name': course_name,
+        return redirect(reverse('session', kwargs={'webinar_name': webinar_name,
                                                    'slug': slug}))
 
     if file_upload_form.is_valid() and 'add_file' in request.POST:
         instance = file_upload_form.save(commit=False)
-        instance.file_fk = Chapter.objects.get(id=place.id)
+        instance.file_fk = Session.objects.get(id=place.id)
         instance.save()
-        return redirect(reverse('chapter', kwargs={'course_name': course_name,
+        return redirect(reverse('session', kwargs={'webinar_name': webinar_name,
                                                    'slug': slug}))
 
-    return render(request, "courses/chapter.html", context)
+    return render(request, "webinars/Session.html", context)
 
 
 @user_passes_test(lambda user: user.is_professor)
-def delete_course(request, course_name=None):
-    instance = Course.objects.get(course_name=course_name)
+def delete_webinar(request, webinar_name=None):
+    instance = Webinar.objects.get(webinar_name=webinar_name)
     instance.delete()
     return HttpResponseRedirect(reverse('profile'))
 
 
 @user_passes_test(lambda user: user.is_professor)
-def delete_chapter(request, course_name=None, slug=None):
-    instance = Chapter.objects.get(slug=slug)
+def delete_session(request, webinar_name=None, slug=None):
+    instance = Session.objects.get(slug=slug)
     instance.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @user_passes_test(lambda user: user.is_professor)
 def delete_yt_link(request, yt_id=None):
-    instance = YTLink.objects.get(id=yt_id)
+    instance = YTLinkW.objects.get(id=yt_id)
     instance.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @user_passes_test(lambda user: user.is_professor)
 def delete_gd_link(request, gd_id=None):
-    instance = gdlink.objects.get(id=gd_id)
+    instance = gdlinkW.objects.get(id=gd_id)
     instance.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @user_passes_test(lambda user: user.is_professor)
 def delete_text_block(request, txt_id=None):
-    instance = TextBlock.objects.get(id=txt_id)
+    instance = TextBlockW.objects.get(id=txt_id)
     instance.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @user_passes_test(lambda user: user.is_professor)
 def delete_file(request, file_id=None):
-    instance = FileUpload.objects.get(id=file_id)
+    instance = FileUploadW.objects.get(id=file_id)
     instance.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @user_passes_test(lambda user: user.is_professor)
-def update_course(request, course_name=None):
-    instance = Course.objects.get(course_name=course_name)
-    update_course_form = EditCourseForm(request.POST or None, instance=instance)
+def update_webinar(request, webinar_name=None):
+    instance = Webinar.objects.get(webinar_name=webinar_name)
+    update_webinar_form = EditWebinarForm(request.POST or None, instance=instance)
 
     path = request.path.split('/')[1]
     redirect_path = path
@@ -222,17 +222,17 @@ def update_course(request, course_name=None):
 
     context = {
         "title": "Edit",
-        "form": update_course_form,
+        "form": update_webinar_form,
         "path": path,
         "redirect_path": redirect_path,
     }
 
-    if update_course_form.is_valid():
-        course_name = update_course_form.cleaned_data.get("course_name")
-        instance = update_course_form.save(commit=False)
+    if update_webinar_form.is_valid():
+        webinar_name = update_webinar_form.cleaned_data.get("webinar_name")
+        instance = update_webinar_form.save(commit=False)
     
-        instance.text = update_course_form.cleaned_data.get("text")
-        key = update_course_form.cleaned_data.get("link")
+        instance.text = update_webinar_form.cleaned_data.get("text")
+        key = update_webinar_form.cleaned_data.get("link")
 
         if 'embed' not in key and 'youtube' in key:
             key = key.split('=')[1]
@@ -242,13 +242,13 @@ def update_course(request, course_name=None):
         instance.save()
         return redirect(reverse('profile'))
 
-    return render(request, "courses/edit.html", context)
+    return render(request, "webinars/edit.html", context)
 
 
 @user_passes_test(lambda user: user.is_professor)
-def update_chapter(request, course_name=None, slug=None):
-    instance = Chapter.objects.get(slug=slug)
-    update_chapter_form = EditChapterForm(request.POST or None, instance=instance)
+def update_session(request, webinar_name=None, slug=None):
+    instance = Session.objects.get(slug=slug)
+    update_Session_form = EditSessionForm(request.POST or None, instance=instance)
 
     path = request.path.split('/')[1]
     redirect_path = path
@@ -256,27 +256,27 @@ def update_chapter(request, course_name=None, slug=None):
 
     context = {
         "title": "Edit",
-        "course_name": course_name,
-        "form": update_chapter_form,
+        "webinar_name": webinar_name,
+        "form": update_Session_form,
         "path": path,
         "redirect_path": redirect_path,
     }
 
-    if update_chapter_form.is_valid():
-        update_chapter_form.save()
-        return redirect(reverse('professor_course', kwargs={'course_name': course_name}))
+    if update_Session_form.is_valid():
+        update_Session_form.save()
+        return redirect(reverse('professor_webinar', kwargs={'webinar_name': webinar_name}))
 
-    return render(request, "courses/edit.html", context)
+    return render(request, "webinars/edit.html", context)
 
 
 @user_passes_test(lambda user: user.is_professor)
-def update_yt_link(request, course_name=None, slug=None, yt_id=None):
-    instance = YTLink.objects.get(id=yt_id)
+def update_yt_link(request, webinar_name=None, slug=None, yt_id=None):
+    instance = YTLinkW.objects.get(id=yt_id)
     update_link_form = EditYTLinkForm(request.POST or None, instance=instance)
 
     context = {
         "title": "Edit",
-        "course_name": course_name,
+        "webinar_name": webinar_name,
         "yt_id": yt_id,
         "slug": slug,
         "form": update_link_form,
@@ -286,20 +286,20 @@ def update_yt_link(request, course_name=None, slug=None, yt_id=None):
 
     if update_link_form.is_valid():
         update_link_form.save()
-        return redirect(reverse('chapter', kwargs={'course_name': course_name,
+        return redirect(reverse('session', kwargs={'webinar_name': webinar_name,
                                                    "slug": slug}))
 
-    return render(request, "courses/edit.html", context)
+    return render(request, "webinars/edit.html", context)
 
 
 @user_passes_test(lambda user: user.is_professor)
-def update_gd_link(request, course_name=None, slug=None, gd_id=None):
-    instance = gdlink.objects.get(id=gd_id)
+def update_gd_link(request, webinar_name=None, slug=None, gd_id=None):
+    instance = gdlinkW.objects.get(id=gd_id)
     update_link_form = EditGDLinkForm(request.POST or None, instance=instance)
 
     context = {
         "title": "Edit",
-        "course_name": course_name,
+        "webinar_name": webinar_name,
         "gd_id": gd_id,
         "slug": slug,
         "form": update_link_form,
@@ -309,19 +309,19 @@ def update_gd_link(request, course_name=None, slug=None, gd_id=None):
 
     if update_link_form.is_valid():
         update_link_form.save()
-        return redirect(reverse('chapter', kwargs={'course_name': course_name,
+        return redirect(reverse('Session', kwargs={'webinar_name': webinar_name,
                                                    "slug": slug}))
 
-    return render(request, "courses/edit.html", context)
+    return render(request, "webinars/edit.html", context)
 
 @user_passes_test(lambda user: user.is_professor)
-def update_text_block(request, course_name=None, slug=None, txt_id=None):
-    instance = TextBlock.objects.get(id=txt_id)
+def update_text_block(request, webinar_name=None, slug=None, txt_id=None):
+    instance = TextBlockW.objects.get(id=txt_id)
     update_txt_form = EditTxtForm(request.POST or None, instance=instance)
 
     context = {
         "title": "Edit",
-        "course_name": course_name,
+        "webinar_name": webinar_name,
         "text_id": txt_id,
         "form": update_txt_form,
         "slug": slug,
@@ -331,17 +331,17 @@ def update_text_block(request, course_name=None, slug=None, txt_id=None):
 
     if update_txt_form.is_valid():
         update_txt_form.save()
-        return redirect(reverse('chapter', kwargs={'course_name': course_name,
+        return redirect(reverse('Session', kwargs={'webinar_name': webinar_name,
                                                    "slug": slug}))
 
-    return render(request, "courses/edit.html", context)
+    return render(request, "webinars/edit.html", context)
 
 
 @user_passes_test(lambda user: user.is_professor)
-def list_students(request, course_name=None):
-    course = Course.objects.get(course_name=course_name)
-    added_students = UserProfile.objects.filter(students_to_course=course)
-    excluded_students = UserProfile.objects.exclude(students_to_course=course).filter(is_professor=False).filter(
+def list_students_webinar(request, webinar_name=None):
+    webinar = Webinar.objects.get(webinar_name=webinar_name)
+    added_students = UserProfile.objects.filter(students_to_webinar=webinar)
+    excluded_students = UserProfile.objects.exclude(students_to_webinar=webinar).filter(is_professor=False).filter(
         is_site_admin=False)
 
     query_first = request.GET.get("q1")
@@ -357,27 +357,27 @@ def list_students(request, course_name=None):
     path = path.title()
 
     context = {
-        "title": "Edit students in course " + course_name,
+        "title": "Edit students in webinar " + webinar_name,
         "excluded_students": excluded_students,
         "added_students": added_students,
-        "course_name": course_name,
+        "webinar_name": webinar_name,
         "path": path,
         "redirect_path": redirect_path,
     }
 
-    return render(request, "courses/add_students.html", context)
+    return render(request, "webinars/add_students.html", context)
 
 
-def add_students(request, student_id, course_name=None):
+def add_students_webinar(request, student_id, webinar_name=None):
     student = UserProfile.objects.get(id=student_id)
-    course = Course.objects.get(course_name=course_name)
-    course.students.add(student)
+    webinar = Webinar.objects.get(webinar_name=webinar_name)
+    webinar.students.add(student)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @user_passes_test(lambda user: user.is_professor)
-def remove_students(request, student_id, course_name=None):
+def remove_students_webinar(request, student_id, webinar_name=None):
     student = UserProfile.objects.get(id=student_id)
-    course = Course.objects.get(course_name=course_name)
-    course.students.remove(student)
+    webinar = Webinar.objects.get(webinar_name=webinar_name)
+    webinar.students.remove(student)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

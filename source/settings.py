@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     # Third party-apps
     'crispy_forms',
     'registration',
+    'pinax.referrals',
     # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,7 +46,8 @@ INSTALLED_APPS = [
     # My apps
     'users',
     'courses',
-    'pinax.referrals',
+    'webinars',
+    
     
     
 ]

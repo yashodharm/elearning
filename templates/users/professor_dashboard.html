@@ -16,6 +16,13 @@
           <input class='btn btn-primary' type='submit' value='Add course'/>
         </form>
       </div>
+      <div class="col-md-4">
+        <form method='POST' action=''>
+          {% csrf_token %}
+          {{ add_webinar_form|crispy }}
+          <input class='btn btn-primary' type='submit' value='Add webinar'/>
+        </form>
+      </div>
 
       <div class="col-md-8">
         {% if queryset_course %}
@@ -40,6 +47,36 @@
                   </a>
                   <a href="{% url 'list_students' instance.course_name %}">
                     <input class='btn btn-info btn-sm' type='submit' value='Edit students'/>
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+        {% endif %}
+      </div>
+      <div class="col-md-8">
+        {% if queryset_webinar %}
+          <table class="table table-condensed table-hover generic-table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>Webinar name</th>
+              <th>Date created</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            {% for instance in queryset_webinar %}
+              <tr>
+                <td><a href="{% url 'professor_webinar' instance.webinar_name %}">{{ instance.webinar_name }}</a></td>
+                <td>{{ instance.webinar_created_date }}</td>
+                <td>
+                  <a href="{% url 'edit_webinar' instance.webinar_name %}">
+                    <input class='btn btn-primary btn-sm' type='submit' value='Edit Webinar'/>
+                  </a>
+                  <a href="{% url 'delete_webinar' instance.webinar_name %}">
+                    <input class='btn btn-danger btn-sm' type='submit' value='Delete Webinar'/>
+                  </a>
+                  <a href="{% url 'list_students_webinar' instance.webinar_name %}">
+                    <input class='btn btn-info btn-sm' type='submit' value='Edit students in webinar'/>
                   </a>
                 </td>
               </tr>

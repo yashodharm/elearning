@@ -4,19 +4,19 @@
 {% load static %}
 
 {% block content %}
-  <link href="{% static 'css/sidebar_course.css' %}" rel="stylesheet"/>
+  <link href="{% static 'css/sidebar_webinar.css' %}" rel="stylesheet"/>
   {% include 'breadcrumb.html' %}
   {% include 'announcement.html'%}
   <div class="container student-course">
     <div class="row">
       <div class="col-md-2">
-        {% if chapter_list %}
+        {% if session_list %}
 
           <ul class="sidebar-nav">
             <li>
-              {% for instance in chapter_list %}
-                <a class="a-target" href="{% url 'student_course' course_name instance.slug %}">
-                  {{ instance.chapter_name }}
+              {% for instance in session_list %}
+                <a class="a-target" href="{% url 'student_webinar' webinar_name instance.slug %}">
+                  {{ instance.session_name }}
                 </a>
               {% endfor %}
             </li>
